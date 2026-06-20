@@ -3,8 +3,9 @@ const mysql = require('mysql2');
 const cors = require('cors');
 const dotenv = require('dotenv');
 
-// ייבוא קובץ ה-Routes של המשתמשים
+// 1. ייבוא קבצי ה-Routes
 const userRoutes = require('./routes/userRoutes');
+const stationRoutes = require('./routes/stationRoutes'); // 🔥 שורה חדשה: מייבאים את ניתובי התחנות
 
 dotenv.config();
 const app = express();
@@ -30,9 +31,9 @@ db.connect((err) => {
 // מאפשר לקבצים אחרים (כמו ה-Controller) לגשת למשתנה ה-db דרך req.app.get('db')
 app.set('db', db);
 
-// 🔥 חיבור ה-Routes של המשתמשים לשרת
-// כל הכתובות בתוך userRoutes יתחילו ב- /api/users
+// 2. 🔥 חיבור ה-Routes של המערכת לשרת
 app.use('/api/users', userRoutes);
+app.use('/api/stations', stationRoutes); // 🔥 שורה חדשה: כל הכתובות שיגיעו ל- /api/stations יופנו לקובץ של התחנות!
 
 app.get('/', (req, res) => {
     res.send('EV Charge Server is running smoothly! ⚡');
