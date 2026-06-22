@@ -87,8 +87,69 @@ const loginUser = (req, res) => {
     });
 };
 
+// פונקציה לשליפת פרטי משתמש (לצורך טעינה למסך העריכה)
+const getUserProfile = (req, res) => {
+    const { userId } = req.params;
+    const db = req.app.get('db');
+    const query = 'SELECT user_id, full_name, email, phone, car_model FROM users WHERE user_id = ?';
+
+    db.query(query, [userId], (err, results) => {
+        if (err || results.length === 0) return res.status(404).json({ message: 'User not found' });
+        res.status(200).json(results[0]);
+    });
+};
+
+// פונקציה לעדכון פרטי משתמש
+// בתוך userController.js
+const updateUserProfile = (req, res) => {
+    const { userId } = req.params;
+    const { full_name, phone, car_model, password, oldPassword } = req.body;
+    const db = req.app.get('db');
+
+    const selectQuery = 'SELECT password FROM users WHERE user_id = ?';
+    db.query(selectQuery, [userId], (err, results) => {
+        if (err || results.length === 0) return res.status(404).json({ message: 'User not found' });
+
+        const currentPassword = results[0].password;
+
+        // אם המשתמש מנסה לשנות סיסמה
+        if (password && password.trim() !== "") {
+            // 1. בדיקה שהסיסמה הישנה שהוזנה נכונה
+            if (oldPassword !== currentPassword) {
+                return res.status(400).json({ message: 'The current password you entered is incorrect.' });
+            }
+            // 2. בדיקה שהסיסמה החדשה שונה מהישנה
+            if (password === currentPassword) {
+                return res.status(400).json({ message: 'New password cannot be the same as your old password.' });
+            }
+        }
+
+        let query = 'UPDATE users SET full_name = ?, phone = ?, car_model = ?';
+        const params = [full_name, phone, car_model];
+
+        if (password && password.trim() !== "") {
+            query += ', password = ?';
+            params.push(password);
+        }
+
+        query += ' WHERE user_id = ?';
+        params.push(userId);
+
+        db.query(query, params, (err, result) => {
+            if (err) return res.status(500).json({ message: 'Database error' });
+            res.status(200).json({ message: 'Profile updated successfully!' });
+        });
+    });
+};
+
+module.exports = { registerUser, loginUser, getUserProfile, updateUserProfile };
+
 // ייצוא שתי הפונקציות כדי שקובץ ה-Routes יוכל להשתמש בהן
-module.exports = {
-    registerUser,
-    loginUser
+// ... (הפונקציות שלך getUserProfile ו-updateUserProfile כבר שם, אז רק תוודא שהן מיוצאות כך בסוף)
+
+module.exports = { 
+    registerUser, 
+    loginUser, 
+    getUserProfile,   // תוודא שזה מופיע כאן
+    updateUserProfile // תוודא שזה מופיע כאן
 };

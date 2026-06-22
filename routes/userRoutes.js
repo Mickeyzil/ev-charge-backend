@@ -1,12 +1,14 @@
 const express = require('express');
 const router = express.Router();
-// ייבוא שתי הפונקציות מה-Controller המעודכן
-const { registerUser, loginUser } = require('../controllers/userController');
+// ייבוא פעם אחת בלבד של כל הפונקציות מה-Controller
+const { registerUser, loginUser, getUserProfile, updateUserProfile } = require('../controllers/userController');
 
-// הגדרת נתיב מסוג POST עבור הרשמה (/api/users/register)
+// הגדרת הנתיבים
 router.post('/register', registerUser);
-
-// 🔥 הגדרת נתיב מסוג POST עבור התחברות (/api/users/login)
 router.post('/login', loginUser);
+
+// נתיבי הפרופיל החדשים
+router.get('/:userId', getUserProfile); 
+router.post('/update/:userId', updateUserProfile);
 
 module.exports = router;
