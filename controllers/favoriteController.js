@@ -7,7 +7,7 @@ const addFavorite = (req, res) => {
         return res.status(400).json({ message: 'User ID and Station ID are required' });
     }
 
-    const query = 'INSERT INTO Favorites (user_id, station_id) VALUES (?, ?)';
+    const query = 'INSERT INTO favorites (user_id, station_id) VALUES (?, ?)';
     db.query(query, [user_id, station_id], (err, result) => {
         if (err) {
             // אם המשתמש כבר הוסיף את התחנה בעבר (מניעת כפילויות הודות ל-Primary Key המשותף)
@@ -26,7 +26,7 @@ const removeFavorite = (req, res) => {
     const { user_id, station_id } = req.body;
     const db = req.app.get('db');
 
-    const query = 'DELETE FROM Favorites WHERE user_id = ? AND station_id = ?';
+    const query = 'DELETE FROM favorites WHERE user_id = ? AND station_id = ?';
     db.query(query, [user_id, station_id], (err, result) => {
         if (err) {
             console.error(err);

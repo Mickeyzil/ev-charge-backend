@@ -23,7 +23,7 @@ const registerUser = (req, res) => {
         }
 
         const insertUserQuery = `
-            INSERT INTO Users (full_name, email, password, phone, car_model) 
+            INSERT INTO users (full_name, email, password, phone, car_model) 
             VALUES (?, ?, ?, ?, ?)
         `;
 
