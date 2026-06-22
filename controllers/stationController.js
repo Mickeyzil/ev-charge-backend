@@ -5,7 +5,7 @@ const getAllStations = (req, res) => {
     const db = req.app.get('db');
 
     // שאילתת שליפה של כל התחנות מהטבלה האמיתית שלך
-    const query = 'SELECT * FROM Stations';
+    const query = 'SELECT * FROM stations';
 
     db.query(query, (err, results) => {
         if (err) {

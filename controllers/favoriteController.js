@@ -53,7 +53,7 @@ const getFavorites = (req, res) => {
             s.price_kwh AS price, 
             s.connectors AS connectors, 
             s.amenities AS amenities
-        FROM Favorites f
+        FROM favorites f
         JOIN stations s ON f.station_id = s.station_id
         WHERE f.user_id = ?
     `;

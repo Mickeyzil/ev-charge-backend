@@ -10,7 +10,7 @@ const registerUser = (req, res) => {
     }
 
     const db = req.app.get('db');
-    const checkUserQuery = 'SELECT * FROM Users WHERE email = ?';
+    const checkUserQuery = 'SELECT * FROM users WHERE email = ?';
     
     db.query(checkUserQuery, [email], (err, results) => {
         if (err) {
@@ -53,7 +53,7 @@ const loginUser = (req, res) => {
     const db = req.app.get('db');
 
     // שאילתה לבדיקה ושליפת המשתמש לפי האימייל שלו
-    const loginQuery = 'SELECT * FROM Users WHERE email = ?';
+    const loginQuery = 'SELECT * FROM users WHERE email = ?';
 
     db.query(loginQuery, [email], (err, results) => {
         if (err) {
