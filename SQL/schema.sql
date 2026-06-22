@@ -35,9 +35,6 @@ CREATE TABLE Reservations (
     FOREIGN KEY (station_id) REFERENCES Stations(station_id) ON DELETE CASCADE
 );
 
-USE ev_charge_db;
-
--- ודא שאתה מריץ את זה כדי למלא את הטבלה במידע הראשוני מה-JSON
 INSERT INTO Stations (name, available_slots, total_slots , power_kw, price_kwh, connectors, amenities) VALUES
 ('Modiin Maccabim Reut','2' ,'3' ,320, 2.50, 'CCS, Type 2', 'WiFi, cafe'),
 ('Haifa','3','3', 150, 2.00, 'CCS, Type 2', 'WiFi, cafe'),
@@ -45,3 +42,14 @@ INSERT INTO Stations (name, available_slots, total_slots , power_kw, price_kwh, 
 ('Jerusalem Central','0', '4', 150, 2.00, 'CCS, Type 2', 'WiFi, cafe'),
 ('Eilat Beachfront','1' , '2', 350, 3.50, 'CCS, CHAdeMO', 'WiFi, cafe, WC');
 select * from stations;
+select * from users;
+
+CREATE TABLE Favorites (
+    user_id INT NOT NULL,
+    station_id INT NOT NULL,
+    PRIMARY KEY (user_id, station_id),
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (station_id) REFERENCES stations(station_id) ON DELETE CASCADE
+);
+
+insert into Favorites(user_id,station_id) values(2,3); 

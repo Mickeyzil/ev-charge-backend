@@ -6,6 +6,7 @@ const dotenv = require('dotenv');
 // 1. ייבוא קבצי ה-Routes
 const userRoutes = require('./routes/userRoutes');
 const stationRoutes = require('./routes/stationRoutes'); // 🔥 שורה חדשה: מייבאים את ניתובי התחנות
+const favoriteRoutes = require('./routes/favoriteRoutes');
 
 dotenv.config();
 const app = express();
@@ -34,6 +35,7 @@ app.set('db', db);
 // 2. 🔥 חיבור ה-Routes של המערכת לשרת
 app.use('/api/users', userRoutes);
 app.use('/api/stations', stationRoutes); // 🔥 שורה חדשה: כל הכתובות שיגיעו ל- /api/stations יופנו לקובץ של התחנות!
+app.use('/api/favorites', favoriteRoutes);
 
 app.get('/', (req, res) => {
     res.send('EV Charge Server is running smoothly! ⚡');
