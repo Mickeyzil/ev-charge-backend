@@ -3,12 +3,13 @@ const mysql = require('mysql2');
 const cors = require('cors');
 const dotenv = require('dotenv');
 
-// 1. ייבוא קבצי ה-Routes
 const userRoutes = require('./routes/userRoutes');
-const stationRoutes = require('./routes/stationRoutes'); // 🔥 שורה חדשה: מייבאים את ניתובי התחנות
+const stationRoutes = require('./routes/stationRoutes');
 const favoriteRoutes = require('./routes/favoriteRoutes');
+const reservationRoutes = require('./routes/reservationRoutes');
 
 dotenv.config();
+
 const app = express();
 
 app.use(cors());
@@ -21,8 +22,8 @@ const db = mysql.createConnection({
     database: process.env.DB_NAME || 'ev_charge_db',
     port: process.env.DB_PORT || 19117,
     ssl: {
-    rejectUnauthorized: false
-  }
+        rejectUnauthorized: false
+    }
 });
 
 db.connect((err) => {
@@ -30,22 +31,23 @@ db.connect((err) => {
         console.error('❌ Error connecting to the database:', err.message);
         return;
     }
+
     console.log('✅ Connected successfully to MySQL database!');
 });
 
-// מאפשר לקבצים אחרים (כמו ה-Controller) לגשת למשתנה ה-db דרך req.app.get('db')
 app.set('db', db);
 
-// 2. 🔥 חיבור ה-Routes של המערכת לשרת
 app.use('/api/users', userRoutes);
-app.use('/api/stations', stationRoutes); // 🔥 שורה חדשה: כל הכתובות שיגיעו ל- /api/stations יופנו לקובץ של התחנות!
+app.use('/api/stations', stationRoutes);
 app.use('/api/favorites', favoriteRoutes);
+app.use('/api/reservations', reservationRoutes);
 
 app.get('/', (req, res) => {
     res.send('EV Charge Server is running smoothly! ⚡');
 });
 
 const PORT = process.env.PORT || 5000;
+
 app.listen(PORT, () => {
     console.log(`🚀 Server is running on port ${PORT}`);
 });
