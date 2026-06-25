@@ -2,11 +2,12 @@ const express = require('express');
 const mysql = require('mysql2');
 const cors = require('cors');
 const dotenv = require('dotenv');
-const statisticsRoutes = require("./routes/statisticsRoutes");
+
 const userRoutes = require('./routes/userRoutes');
 const stationRoutes = require('./routes/stationRoutes');
 const favoriteRoutes = require('./routes/favoriteRoutes');
 const reservationRoutes = require('./routes/reservationRoutes');
+const statisticsRoutes = require('./routes/statisticsRoutes');
 
 dotenv.config();
 
@@ -41,6 +42,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/stations', stationRoutes);
 app.use('/api/favorites', favoriteRoutes);
 app.use('/api/reservations', reservationRoutes);
+app.use('/api/statistics', statisticsRoutes);
 
 app.get('/', (req, res) => {
     res.send('EV Charge Server is running smoothly! ⚡');
@@ -51,4 +53,3 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     console.log(`🚀 Server is running on port ${PORT}`);
 });
-app.use("/api/statistics", statisticsRoutes);
