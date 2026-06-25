@@ -5,11 +5,10 @@ const {
     getUserReservations
 } = require("../controllers/reservationController");
 
-const {
-    createReservation
-} = require("../controllers/reservationController");
+
 
 router.get("/user/:userId", getUserReservations);
 router.post("/create", createReservation);
+
 
 module.exports = router;
