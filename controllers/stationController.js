@@ -98,8 +98,89 @@ const updateStationByExternalCompany = (req, res) => {
     );
 };
 
+const createStation = (req, res) => {
+    const { 
+        name, 
+        available_slots, 
+        total_slots, 
+        power_kw, 
+        price_kwh, 
+        connectors, 
+        amenities, 
+        latitude, 
+        longitude 
+    } = req.body;
+
+    const db = req.app.get('db');
+
+    if (!name || available_slots === undefined || total_slots === undefined || !power_kw || !price_kwh) {
+        return res.status(400).json({ message: "Missing required fields to create a station." });
+    }
+
+    const query = `
+        INSERT INTO stations (
+            name, 
+            available_slots, 
+            total_slots, 
+            power_kw, 
+            price_kwh, 
+            connectors, 
+            amenities, 
+            latitude, 
+            longitude
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+
+    db.query(
+        query,
+        [
+            name, 
+            available_slots, 
+            total_slots, 
+            power_kw, 
+            price_kwh, 
+            connectors, 
+            amenities, 
+            latitude, 
+            longitude
+        ],
+        (err, result) => {
+            if (err) {
+                console.error("Database error during station creation:", err);
+                return res.status(500).json({ message: "Failed to create station." });
+            }
+
+            return res.status(201).json({
+                message: "Station created successfully! ⚡",
+                station_id: result.insertId
+            });
+        }
+    );
+};
+
+const deleteStation = (req, res) => {
+    const { station_id } = req.params;
+    const db = req.app.get('db');
+
+    const query = 'DELETE FROM stations WHERE station_id = ?';
+
+    db.query(query, [station_id], (err, result) => {
+        if (err) {
+            console.error("Database error during station deletion:", err);
+            return res.status(500).json({ message: "Failed to delete station." });
+        }
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ message: "Station not found." });
+        }
+
+        return res.status(200).json({ message: "Station deleted successfully." });
+    });
+};
 
 module.exports = {
     getAllStations,
-    updateStationByExternalCompany
+    updateStationByExternalCompany,
+    createStation, 
+    deleteStation
 };
