@@ -3,7 +3,6 @@ const addFavorite = (req, res) => {
     const { user_id, station_id } = req.body;
     const db = req.app.get('db');
 
-    // בדיקת חובה בסיסית לשדות הבקשה
     if (!user_id || !station_id) {
         return res.status(400).json({ message: 'User ID and Station ID are required' });
     }
@@ -11,12 +10,10 @@ const addFavorite = (req, res) => {
     const query = 'INSERT INTO favorites (user_id, station_id) VALUES (?, ?)';
     db.query(query, [user_id, station_id], (err, result) => {
         if (err) {
-            // מניעת כפילויות במידה והתחנה כבר קיימת במועדפים של המשתמש
             if (err.code === 'ER_DUP_ENTRY') {
                 return res.status(400).json({ message: 'Station already in favorites' });
             }
             
-            // הגנה: אם ה-user_id או ה-station_id לא קיימים בכלל בטבלאות האם שלהם בדטבייס
             if (err.code === 'ER_NO_REFERENCED_ROW_2' || err.code === 'ER_NO_REFERENCED_ROW') {
                 return res.status(404).json({ message: 'Failed to add favorite. User or Station does not exist.' });
             }
@@ -28,7 +25,6 @@ const addFavorite = (req, res) => {
     });
 };
 
-// 2. הסרת תחנה מהמועדפים (כולל הגנה מפני מחיקת קשר לא קיים)
 const removeFavorite = (req, res) => {
     const { user_id, station_id } = req.body;
     const db = req.app.get('db');
@@ -44,7 +40,6 @@ const removeFavorite = (req, res) => {
             return res.status(500).json({ message: 'Database error' });
         }
 
-        // הגנה: אם result.affectedRows הוא 0, זה אומר ששום שורה לא נמחקה (הקשר לא היה קיים בדטבייס)
         if (result.affectedRows === 0) {
             return res.status(404).json({ message: 'Favorite relation not found. Check if user or station exists.' });
         }
@@ -53,12 +48,10 @@ const removeFavorite = (req, res) => {
     });
 };
 
-// 3. שליפת כל התחנות המועדפות של משתמש מסוים (כולל בדיקת קיום משתמש)
 const getFavorites = (req, res) => {
     const { userId } = req.params;
     const db = req.app.get('db');
 
-    // שלב א': בדיקה האם המשתמש בכלל קיים במערכת (לפי ה-user_id של טבלת users)
     const checkUserQuery = 'SELECT user_id FROM users WHERE user_id = ?';
 
     db.query(checkUserQuery, [userId], (err, userResults) => {
@@ -67,12 +60,10 @@ const getFavorites = (req, res) => {
             return res.status(500).json({ message: 'Database error' });
         }
 
-        // אם המערך ריק - המשתמש לא קיים בדטבייס! נחזיר שגיאת 404 מסודרת
         if (userResults.length === 0) {
             return res.status(404).json({ message: 'User not found.' });
         }
 
-        // שלב ב': המשתמש קיים! עכשיו נשלוף בבטחה את המועדפים שלו בעזרת ה-JOIN
         const query = `
             SELECT 
                 f.station_id AS favorite_id, 
@@ -94,7 +85,6 @@ const getFavorites = (req, res) => {
                 console.error("Database error in getFavorites:", err);
                 return res.status(500).json({ message: 'Database error' });
             }
-            // יחזיר מערך ריק [] אם המשתמש קיים ואין לו מועדפים, או מערך מלא אם יש לו מועדפים
             res.status(200).json(results);
         });
     });

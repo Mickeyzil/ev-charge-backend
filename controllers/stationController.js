@@ -1,11 +1,9 @@
 const mysql = require('mysql2');
 
-// פונקציה לקבלת כל תחנות הטעינה מהדטבייס והתאמתן ל-JSON מחלק א'
 const getAllStations = (req, res) => {
     
     const db = req.app.get('db');
 
-    // שאילתת שליפה של כל התחנות מהטבלה האמיתית שלך
     const query = 'SELECT * FROM stations';
 
     db.query(query, (err, results) => {
